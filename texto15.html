@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Página de Contenido</title>
+  <style>
+    /* Reset básico */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      min-height: 50vh;
+      background: #000;
+      color: rgb(255, 0, 255);
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 2rem 1rem 7rem;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    body::after {
+      content: "";
+      display: block;
+      height: 0rem;
+    }
+
+    /* Variables globales */
+    :root {
+      --bar-intervals: 3000, 4000, 6000;
+      --region-speed: 180;
+      --region-height: 70;
+      --bar-thickness: 2;
+      --glow-blur: 100;
+      --glitch-speed: .1s;
+      --glitch-x: 0px;
+      --glitch-y: 0px;
+    }
+
+    /* Canvas de fondo con barras estáticas */
+    canvas#static {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Glitch en el título */
+    .glitch {
+      position: relative;
+      display: inline-block;
+      color: rgb(255, 0, 255);
+      z-index: 2;
+      animation: glitch var(--glitch-speed) ease-in-out infinite;
+      text-shadow: 0 0 0px rgb(255, 0, 255), 0 0 0px rgb(255, 0, 255);
+    }
+
+    @keyframes glitch {
+      0%, 40%, 80%, 100% {
+        transform: translate(0, 0);
+        text-shadow: 0 0 0px rgb(255, 0, 255), 0 0 0px rgb(255, 0, 255);
+      }
+      10% {
+        transform: translate(var(--glitch-x), var(--glitch-y));
+        text-shadow: 0px 0px 0px rgba(255, 0, 255, 0.8), 0px 0px 0px rgba(255, 0, 255, 0.5);
+      }
+      30% {
+        transform: translate(calc(-1 * var(--glitch-x)), var(--glitch-y));
+        text-shadow: 0px 0px 0px rgba(255, 0, 255, 0.8), 0px 0px 0px rgba(255, 0, 255, 0.5);
+      }
+      60% {
+        transform: translate(var(--glitch-x), calc(-1 * var(--glitch-y)));
+        text-shadow: 0px 0px 0px rgba(255, 0, 255, 0.8), 0px 0px 0px rgba(255, 0, 255, 0.5);
+      }
+    }
+
+    /* Caja ASCII para texto */
+    pre.ascii-box {
+      position: relative;
+      z-index: 2;
+      font-family: 'Courier New', Courier, monospace;
+      color: #fff;
+      font-size: 1rem;
+      white-space: pre;
+      text-align: left;
+      line-height: 1.2;
+      margin: 1rem 0;
+    }
+
+    /* Caja ASCII invisible para título */
+    .ascii-box.invisible-box {
+      color: transparent;
+      background: transparent;
+      border: none;
+    }
+    .ascii-box.invisible-box h1 {
+      color: rgb(255, 0, 255);
+      font-weight: 100;
+      margin: 0;
+    }
+
+    /* Imagen de pie de página */
+    .footer-img {
+      position: relative;
+      z-index: 0;
+      margin-top: auto;
+      margin-bottom: 0rem;
+    }
+    .footer-img img {
+      max-width: 80vw;
+      max-height: 40vw;
+      margin-bottom: 0rem;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .spacer {
+      height: 0rem;
+      background: transparent;
+    }
+  </style>
+</head>
+<body style="padding-bottom: 5rem;">
+
+  <!-- Canvas para efecto de barras -->
+  <canvas id="static"></canvas>
+  <script>
+    (function(){
+      const canvas = document.getElementById('static');
+      const ctx = canvas.getContext('2d'); let W,H;
+      function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+      window.addEventListener('resize', resize); resize();
+      const intervals=[3000,4000,6000], speed=180, height=70, thick=2, blur=100;
+      function draw(yStart){ ctx.clearRect(0,0,W,H); ctx.shadowColor='#ff00ff'; ctx.shadowBlur=blur;
+        for(let y=yStart;y<yStart+height;y+=thick){ ctx.fillStyle=`rgba(255,0,255,${Math.random()*0.7})`; ctx.fillRect(0,y,W,thick);} ctx.shadowBlur=0; }
+      function run(){ const dir=Math.random()<0.5?1:-1, start=performance.now(); const full=Math.random()<0.5?speed:speed*Math.random();
+        (function frame(now){ const t=now-start; if(t<full){ const p=t/speed; const yStart=dir===1? -height + p*(H+height) : H - p*(H+height); draw(yStart); requestAnimationFrame(frame);} else ctx.clearRect(0,0,W,H); })(start);
+      }
+      (function sched(){ run(); setTimeout(sched, intervals[Math.floor(Math.random()*intervals.length)]); })();
+    })();
+  </script>
+
+        <!-- Título con glitch dentro de una caja ASCII invisible -->
+    <!-- Título con glitch dentro de una caja ASCII invisible -->
+    <!-- Título con glitch dentro de una caja ASCII invisible -->
+    <!-- Título con glitch dentro de una caja ASCII invisible -->
+  <pre class="ascii-box invisible-box">
+  +--------------------------------------+
+  |<h1 class="glitch">15. Las quesadillas si</h1>  |
+  |<h1 class="glitch">deben llevar queso</h1>
+  +--------------------------------------+
+  </pre>
+
+            <!-- Contenido en caja ASCII -->
+  <pre class="ascii-box">
+ ________________________________________________________________________
+|                                                                        |
+| Descubrí una manera nueva de hacer quesadillas y no sabes las ganas    |
+| que tuve de contarte y hacerlas con un café con leche para que las     |
+| probaras, ahora solo me imagino lo que me dirías en ese escenario      |
+| ficticio, pero es que ya ni siquiera puedo confiar en mi imaginación   |
+| porque me he olvidado de tu voz, no puedo recordar tu cara, ni tu olor |
+| ni tus gestos ni tu manera decir que me amabas, entonces mi quesadilla |
+| se volvió un pretexto mediocre para intentar recordarte sin éxito y    |  
+| es que ahora el agua ya no me sabe insípida, y eso que ya sé que no    |
+| sabe a nada, y tu calle volvió a ser otro camino que evitar porque se  |
+| llena de tráfico a las seis de la tarde y mi quesadilla solo es una    |
+| quesadilla envuelta en una costra de queso y lo nuestro entonces solo  |
+| fue otra relación más que terminó y la ruptura tampoco fue tan         |
+| catastrófica como lo imaginé y tú dejaste de ser quien eras porque ya  |
+| ni siquiera puedo recordarte y yo dejé de ser quien era porque ahora   |
+| hago quesadillas de otra manera. Puede que la próxima vez ya no me     |
+| acuerde de ti al hacer quesadillas y tal vez esto siempre fue lo       |
+| que tuvo que ser. Ahora hago quesadillas de otra manera y creo que me  |
+| gustan más.                                                            |
+|________________________________________________________________________|
+  </pre><div class="footer-img">
+    <img src="MONICA FINAL/10.jpg" alt="Descripción de la imagen">
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- Vincular el archivo glitch.js -->
+  <script src="glitch.js"></script>
+</body>
+</html>

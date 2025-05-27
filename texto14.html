@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Página de Contenido</title>
+  <style>
+    /* Reset básico */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      min-height: 50vh;
+      background: #000;
+      color: rgb(255, 0, 255);
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 2rem 1rem 7rem;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    body::after {
+      content: "";
+      display: block;
+      height: 0rem;
+    }
+
+    /* Variables globales */
+    :root {
+      --bar-intervals: 3000, 4000, 6000;
+      --region-speed: 180;
+      --region-height: 70;
+      --bar-thickness: 2;
+      --glow-blur: 100;
+      --glitch-speed: .1s;
+      --glitch-x: 0px;
+      --glitch-y: 0px;
+    }
+
+    /* Canvas de fondo con barras estáticas */
+    canvas#static {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Glitch en el título */
+    .glitch {
+      position: relative;
+      display: inline-block;
+      color: rgb(255, 0, 255);
+      z-index: 2;
+      animation: glitch var(--glitch-speed) ease-in-out infinite;
+      text-shadow: 0 0 0px rgb(255, 0, 255), 0 0 0px rgb(255, 0, 255);
+    }
+
+    @keyframes glitch {
+      0%, 40%, 80%, 100% {
+        transform: translate(0, 0);
+        text-shadow: 0 0 0px rgb(255, 0, 255), 0 0 0px rgb(255, 0, 255);
+      }
+      10% {
+        transform: translate(var(--glitch-x), var(--glitch-y));
+        text-shadow: 0px 0px 0px rgba(255, 0, 255, 0.8), 0px 0px 0px rgba(255, 0, 255, 0.5);
+      }
+      30% {
+        transform: translate(calc(-1 * var(--glitch-x)), var(--glitch-y));
+        text-shadow: 0px 0px 0px rgba(255, 0, 255, 0.8), 0px 0px 0px rgba(255, 0, 255, 0.5);
+      }
+      60% {
+        transform: translate(var(--glitch-x), calc(-1 * var(--glitch-y)));
+        text-shadow: 0px 0px 0px rgba(255, 0, 255, 0.8), 0px 0px 0px rgba(255, 0, 255, 0.5);
+      }
+    }
+
+    /* Caja ASCII para texto */
+    pre.ascii-box {
+      position: relative;
+      z-index: 2;
+      font-family: 'Courier New', Courier, monospace;
+      color: #fff;
+      font-size: 1rem;
+      white-space: pre;
+      text-align: left;
+      line-height: 1.2;
+      margin: 1rem 0;
+    }
+
+    /* Caja ASCII invisible para título */
+    .ascii-box.invisible-box {
+      text-align: center;
+      color: transparent;
+      background: transparent;
+      border: none;
+    }
+    .ascii-box.invisible-box h1 {
+      color: rgb(255, 0, 255);
+      font-weight: 100;
+      margin: 0;
+    }
+
+    /* Imagen de pie de página */
+    .footer-img {
+      position: relative;
+      z-index: 0;
+      margin-top: auto;
+      margin-bottom: 0rem;
+    }
+    .footer-img img {
+      max-width: 80vw;
+      max-height: 40vw;
+      margin-bottom: 0rem;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .spacer {
+      height: 0rem;
+      background: transparent;
+    }
+  </style>
+</head>
+<body style="padding-bottom: 5rem;">
+
+  <!-- Canvas para efecto de barras -->
+  <canvas id="static"></canvas>
+  <script>
+    (function(){
+      const canvas = document.getElementById('static');
+      const ctx = canvas.getContext('2d'); let W,H;
+      function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+      window.addEventListener('resize', resize); resize();
+      const intervals=[3000,4000,6000], speed=180, height=70, thick=2, blur=100;
+      function draw(yStart){ ctx.clearRect(0,0,W,H); ctx.shadowColor='#ff00ff'; ctx.shadowBlur=blur;
+        for(let y=yStart;y<yStart+height;y+=thick){ ctx.fillStyle=`rgba(255,0,255,${Math.random()*0.7})`; ctx.fillRect(0,y,W,thick);} ctx.shadowBlur=0; }
+      function run(){ const dir=Math.random()<0.5?1:-1, start=performance.now(); const full=Math.random()<0.5?speed:speed*Math.random();
+        (function frame(now){ const t=now-start; if(t<full){ const p=t/speed; const yStart=dir===1? -height + p*(H+height) : H - p*(H+height); draw(yStart); requestAnimationFrame(frame);} else ctx.clearRect(0,0,W,H); })(start);
+      }
+      (function sched(){ run(); setTimeout(sched, intervals[Math.floor(Math.random()*intervals.length)]); })();
+    })();
+  </script>
+
+        <!-- Título con glitch dentro de una caja ASCII invisible -->
+    <!-- Título con glitch dentro de una caja ASCII invisible -->
+    <!-- Título con glitch dentro de una caja ASCII invisible -->
+  <pre class="ascii-box invisible-box">
+  +--------------------------------------+
+  |<h1 class="glitch">14. No se amar y está bien</h1>     |
+  +--------------------------------------+
+  </pre>
+
+          <!-- Contenido en caja ASCII -->
+    <!-- Contenido en caja ASCII -->
+  <pre class="ascii-box">
+ _______________________________________________________________________
+|                                                                       |
+| Poco se habla de la gente que lastima, de los seres que no saben qué  |
+| hacer con tanto sentir, que lastiman sin que esa fuera la primera     |
+| intención de su pensar.                                               |
+| Poco se habla de los seres que lastiman porque no saben amar, que lo  |
+| intentan con toda su voluntad, pero que, sin importar cuán inocente   |
+| sea el intento, terminan por herir de muerte a ese ser amado.         |
+| Yo no sé amar, y abrazo eso. No sé cómo debería recibir el amor       |
+| romántico, ni tampoco sé cómo devolverlo o expresarlo.                |
+| ¿Está bien eso?                                                       |
+| Yo he dañado. No debemos ser buenas personas todo el tiempo. Nadie lo |
+| es.                                                                   |
+| ¿Qué es el amor sin dolor? ¿Acaso el sufrir no es parte de la         |
+| existencia humana, así como lloramos al nacer?                        |
+| Nacemos por pasión, nacemos por dolor. ¿Por qué deberíamos reprimirlo |
+| hasta lo más básico cuando se trata del gesto de amar?                |
+| Mi manera de amar es tan impulsiva, catastrófica, caótica y           |
+| extremista.                                                           |
+| Y si mi manera de amar es tan carnal, pasional y dolorosa...          |
+| Y si mi manera de amar no es correcta...                              |
+| Entonces, ¿qué más da?                                                |
+| Entonces, está bien.                                                  |
+|_______________________________________________________________________|
+  </pre><!-- Imagen al final -->
+  <div class="footer-img">
+    <img src="MONICA FINAL/14.jpg" alt="Descripción de la imagen">
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- Vincular el archivo glitch.js -->
+  <script src="glitch.js"></script>
+</body>
+</html>
