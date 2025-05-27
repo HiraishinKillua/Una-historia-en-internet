@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Página de Contenido</title>
+  <style>
+    /* Reset básico */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      min-height: 50vh;
+      background: #000;
+      color: rgb(255, 0, 255);
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 2rem 1rem 7rem;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    body::after {
+      content: "";
+      display: block;
+      height: 0rem;
+    }
+
+    /* Variables globales */
+    :root {
+      --bar-intervals: 3000, 4000, 6000;
+      --region-speed: 180;
+      --region-height: 70;
+      --bar-thickness: 2;
+      --glow-blur: 100;
+      --glitch-speed: .1s;
+      --glitch-x: 0px;
+      --glitch-y: 0px;
+    }
+
+    /* Canvas de fondo con barras estáticas */
+    canvas#static {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Glitch en el título */
+    .glitch {
+      position: relative;
+      display: inline-block;
+      color: rgb(255, 0, 255);
+      z-index: 2;
+      animation: glitch var(--glitch-speed) ease-in-out infinite;
+      text-shadow: 0 0 0px rgb(255, 0, 255), 0 0 0px rgb(255, 0, 255);
+    }
+  
+    @keyframes glitch {
+      0%, 40%, 80%, 100% {
+        transform: translate(0, 0);
+        text-shadow: 0 0 0px rgb(255, 0, 255), 0 0 0px rgb(255, 0, 255);
+      }
+      10% {
+        transform: translate(var(--glitch-x), var(--glitch-y));
+        text-shadow: 0px 0px 0px rgba(255, 0, 255, 0.8), 0px 0px 0px rgba(255, 0, 255, 0.5);
+      }
+      30% {
+        transform: translate(calc(-1 * var(--glitch-x)), var(--glitch-y));
+        text-shadow: 0px 0px 0px rgba(255, 0, 255, 0.8), 0px 0px 0px rgba(255, 0, 255, 0.5);
+      }
+      60% {
+        transform: translate(var(--glitch-x), calc(-1 * var(--glitch-y)));
+        text-shadow: 0px 0px 0px rgba(255, 0, 255, 0.8), 0px 0px 0px rgba(255, 0, 255, 0.5);
+      }
+    }
+
+    /* Caja ASCII para texto */
+    pre.ascii-box {
+      position: relative;
+      z-index: 2;
+      font-family: 'Courier New', Courier, monospace;
+      color: #fff;
+      font-size: 1rem;
+      white-space: pre;
+      text-align: left;
+      line-height: 1.2;
+      margin: 1rem 0;
+    }
+
+    /* Hacer invisible la caja ASCII del título */
+    .ascii-box.invisible-box {
+      color: transparent;
+      background: transparent;
+      border: none;
+    }
+    .ascii-box.invisible-box h1 {
+      color: rgb(255, 0, 255);
+      font-weight: 100;
+      margin: 0;
+    }
+
+    /* Imagen de pie de página */
+    .footer-img {
+      position: relative;
+      z-index: 0;
+      margin-top: auto;
+      margin-bottom: 0rem;
+    }
+    .footer-img img {
+      max-width: 80vw;
+      max-height: 40vw;
+      margin-bottom: 0rem;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .spacer {
+      height: 0rem;
+      background: transparent;
+    }
+  </style>
+</head>
+<body style="padding-bottom: 5rem;">
+
+  <!-- Canvas para efecto de barras -->
+  <canvas id="static"></canvas>
+  <script>
+    (function(){
+      const canvas = document.getElementById('static');
+      const ctx = canvas.getContext('2d'); let W,H;
+      function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+      window.addEventListener('resize', resize); resize();
+      const intervals=[3000,4000,6000], speed=180, height=70, thick=2, blur=100;
+      function draw(yStart){ ctx.clearRect(0,0,W,H); ctx.shadowColor='#ff00ff'; ctx.shadowBlur=blur;
+        for(let y=yStart;y<yStart+height;y+=thick){ ctx.fillStyle=`rgba(255,0,255,${Math.random()*0.7})`; ctx.fillRect(0,y,W,thick);} ctx.shadowBlur=0; }
+      function run(){ const dir=Math.random()<0.5?1:-1, start=performance.now(); const full=Math.random()<0.5?speed:speed*Math.random();
+        (function frame(now){ const t=now-start; if(t<full){ const p=t/speed; const yStart=dir===1? -height + p*(H+height) : H - p*(H+height); draw(yStart); requestAnimationFrame(frame);} else ctx.clearRect(0,0,W,H); })(start);
+      }
+      (function sched(){ run(); setTimeout(sched, intervals[Math.floor(Math.random()*intervals.length)]); })();
+    })();
+  </script>
+
+  <!-- Título con glitch dentro de una caja ASCII invisible -->
+  <pre class="ascii-box invisible-box">
+  +--------------------------------------+
+  | <h1 class="glitch">2. El amor si tiene </h1> |
+  | <h1 class="glitch">una fecha de caducidad</h1> |
+  +--------------------------------------+
+  </pre>
+
+  <!-- Contenido en caja ASCII -->
+  <pre class="ascii-box">
+ ________________________________________________________________________
+|                                                                        |
+| ¿Qué harías si te dijeran que aún te quedan seis meses? Seis meses de  |
+| vernos, de tocarnos, de abrazarnos, de mirarnos a los ojos y compartir |
+| nuestros pensamientos. El amor a distancia es como un amor fantasma:   |
+| lo sientes, pero no lo puedes ver; está ahí, pero no sabes si es verdad|
+| o solamente tu imaginación aferrándose a algo que probablemente ya no  |
+| exista.                                                                |
+|                                                                        |
+| Seis meses que parecen seis días. Me siento en el piso, me duele el    |
+| brazo y el pato de Fisher's que compré comienza a parecerme estúpido.  |
+| Me parece estúpido todo: me parece estúpido tu amor, tus abrazos, tus  |
+| promesas y tus caricias que ahora carecen de sentido. Me parece        |
+| estúpida la monogamia, pero mis creencias se vuelven contra mí         |
+| porque, aun así, yo quiero estar contigo. A pesar de que me rompas     |
+| mil veces, me miras a los ojos y todo se compone. Como si estuviéramos |
+| hechos el uno para el otro, pero sin poder estarlo, porque siempre hay |
+| alguien de por medio.                                                  |
+|                                                                        |
+| Te quiero odiar. Quisiera gritarte a la cara y correr hacia la nada,   |
+| mentirte a la cara y confundir tu pensamiento. Otra vez llega a mi     |
+| mente lo mucho que te detesto por reabrir una herida tan escandalosa y |
+| desaparecer entre la inmensidad del mundo. Y aquí queda un vacío lleno |
+| de amor. ¿Pero qué haré ahora con tanto amor que dar, cuando ya te has |
+| ido? Tal vez lo venderé por eBay.                                      |
+|________________________________________________________________________|
+</pre>
+
+  <!-- Imagen al final -->
+  <div class="footer-img">
+    <img src="MONICA FINAL/2.jpg" alt="Descripción de la imagen">
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- Vincular el archivo glitch.js -->
+  <script src="glitch.js"></script>
+</body>
+</html>
