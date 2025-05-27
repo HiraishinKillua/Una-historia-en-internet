@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Índice – Diagrama ASCII (Grid)</title>
+  <style>
+    :root {
+      --gap-vertical: 0rem;
+      --max-width: min(100vw, 1200px);
+      --ascii-max-width: 50vw;
+      --ascii-max-height: 100vh;
+      --diagram-max-height: 60vh;
+      --diagram-indent: 4ch;
+      --pink: 255, 0, 255;
+    }
+
+    body, html {
+      margin: 0;
+      padding-top: -10vh;
+      background: #000;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .container {
+      display: grid;
+      grid-template-rows: auto auto;
+      row-gap: var(--gap-vertical);
+      justify-items: center;
+      align-items: center;
+      width: var(--max-width);
+      margin: 0 auto;
+      margin-top: 3rem;
+      position: relative;
+      overflow-x: visible;
+    }
+
+    .ascii-box {
+      width: var(--ascii-max-width);
+      max-height: var(--ascii-max-height);
+      overflow-y: auto;
+      margin: 0;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      white-space: pre;
+      color: #fff;
+      font-size: clamp(12px, 1.5vw, 20px);
+      line-height: 1.1;
+    }
+
+    .diagram {
+      display: inline-block;
+      width: max-content;
+      max-width: 100%;
+      /*max-height: var(--diagram-max-height);*/
+      overflow-x: auto;
+      overflow-y: auto;
+      overflow: visible;
+      margin: 0;
+      padding: 0;
+      padding-left: var(--diagram-indent);
+      text-align: left;
+      font-family: 'Courier New', monospace;
+      white-space: pre;
+      color: #fff;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .blink {
+      color: rgb(var(--pink));
+      animation: neonBlink .7s infinite;
+    }
+    @keyframes neonBlink {
+      0%,50%,100% { opacity: 1; }
+      25%,75%     { opacity: 0; }
+    }
+    .glitch {
+      display: inline-block;
+      position: relative;
+      color: rgb(var(--pink));
+      animation: glitch 1s ease-in-out infinite;
+    }
+    @keyframes glitch {
+      10% { transform: translate(0.1px, 0.1px); }
+      30% { transform: translate(-0.1px, 0.1px); }
+      60% { transform: translate(0.1px, -0.1px); }
+    }
+    canvas#static {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 99;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="static"></canvas>
+
+  <div class="container">
+    <!-- CAJA RECTANGULAR CORREGIDA -->
+    <pre class="ascii-box">
+ ________________
+|                |
+| <span class="glitch">Una</span>            |
+| <span class="glitch">historia</span>       |
+| <span class="glitch">en internet</span>    |
+|________________|
+    </pre>
+
+    <!-- DIAGRAMA ORIGINAL -->
+    <pre class="diagram">
+                      |        +---------------+
+        <a href="texto1.html">1</a> <span class="blink">o</span>--+--      |        |               |
+             |        |        |               |
+             |        |        |               <span class="blink">o</span> <a href="texto3.html">3</a>
+             +--------<span class="blink">o</span>--------+               |
+                      <a href="texto2.html">2</a>                        |
+                      |                        |
+                      |                        |
+                      |                        |
+  +------- <a href="texto5.html">5</a> <span class="blink">o</span>        |                        |
+  |          |        |                        |
+  |          |        |                        |
+  |          +--------+---------------- <a href="texto4.html">4</a> <span class="blink">o</span>----+
+  |                   |_     
+  |                     |
+<a href="texto6.html">6 </a><span class="blink">o</span>                     |
+   \                    |  
+    \                   |         
+     \         <span class="blink">o</span> <a href="texto7.html">7</a> -----+-----------<span class="blink">o</span> <a href="texto8.html">8</a> -------------+
+      \_______/         |                            |
+                        |                            |
+                       _|                            |
+                      |                              |
++---------<a href="texto11.html"> 11 </a><span class="blink">o</span>-------+--+---</a><span class="blink">o</span> <a href="texto10.html">10 </a>------------+      |
+|                        |                    |      |
+|                        |                    |      |
+|                        |                    |      |
+|                        |                    +----<a href="texto9.html">9</a> <span class="blink">o</span>
++----<span class="blink">o</span> <a href="texto12.html">12</a> ----------+----+-----------+       
+                    |                |
+                    |                |
+                 <a href="texto15.html">15</a> <span class="blink">o</span>                <span class="blink">o</span><a href="texto13.html"> 13</a>
+                    |                |
+                    |                |
+                    +---<span class="blink">o</span> <a href="texto14.html">14</a> --------+
+                        
+    </pre>
+  </div>
+
+  <script src="glitch.js"></script>
+  <script>
+    (function(){
+      const canvas = document.getElementById('static');
+      const ctx    = canvas.getContext('2d');
+      let W, H;
+  
+      function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+  
+      const effectIntervals = [3000, 4000, 6000],
+            regionSpeed      = 180,
+            regionHeight     = 70,
+            barThickness     = 2,
+            glowBlur         = 100,
+            fullChance       = 0.5;
+  
+      function drawFrame(yStart) {
+        ctx.clearRect(0, 0, W, H);
+        ctx.shadowColor = '#ff00ff'; // Cambiar a rosa fosforescente
+        ctx.shadowBlur  = glowBlur;
+        for (let y = yStart; y < yStart + regionHeight; y += barThickness) {
+          const alpha = Math.random() * 0.7;
+          ctx.fillStyle = `rgba(255, 0, 255, ${alpha})`; // Cambiar a rosa con transparencia
+          ctx.fillRect(0, y, W, barThickness);
+        }
+        ctx.shadowBlur = 0;
+      }
+  
+      function runEffect() {
+        const direction = Math.random() < 0.5 ? 1 : -1,
+              start     = performance.now(),
+              stopTime  = Math.random() < fullChance
+                         ? regionSpeed
+                         : regionSpeed * Math.random();
+  
+        (function frame(now) {
+          const elapsed = now - start;
+          if (elapsed < stopTime) {
+            const p = elapsed / regionSpeed,
+                  yStart = direction === 1
+                         ? -regionHeight + p * (H + regionHeight)
+                         : H - p * (H + regionHeight);
+            drawFrame(yStart);
+            requestAnimationFrame(frame);
+          } else {
+            ctx.clearRect(0, 0, W, H);
+          }
+        })(start);
+      }
+  
+      (function schedule() {
+        runEffect();
+        setTimeout(schedule, effectIntervals[Math.floor(Math.random() * effectIntervals.length)]);
+      })();
+    })();
+  </script>
+</body>
+</html>
+
